@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>HarryCorp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="images/favicon.png">
+
+  <style>
+    body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:#f3f3f3; color:#222; }
+    header { background:#0067b8; color:white; padding:60px 20px 40px; text-align:center; }
+    header h1 { font-size:56px; margin-bottom:10px; }
+    header p { font-size:20px; font-weight:500; margin-bottom:30px; }
+    nav { display:flex; justify-content:center; gap:30px; }
+    nav a { background:white; color:#0067b8; padding:12px 20px; border-radius:6px;
+            text-decoration:none; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    nav a:hover { background:#e6f0ff; } 
+    footer { text-align:center; padding:30px; font-size:14px; color:#555; }
+body::before {
+  content: "";
+  position: fixed;
+  top: 300px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 300px);
+  background: url(pictures\backroomss1.png") no-repeat center center;
+  background-size: cover;
+  filter: blur(6px);
+  z-index: -1;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HarryFood</h1>
+    <p>Make eating better</p>
+    <nav>
+      <a href="">Giới thiệu</a> 
+      <a href="">Đặt hàng trước</a>
+      <a href="">Tin Tức</a>
+      <a href="">Liên hệ</a>
+    </nav>
+  </header>
+  <footer>© 2026 HarryFood · All rights reserved</footer>
+<footer>© HarryFood · WE DON'T USE ANY AI ON ANY OF OUR PRODUCTS</footer>
+<footer><br>This is not a real company</br></footer>
+</body>
+</html>
