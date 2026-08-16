@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết đặt hàng</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:#f3f3f3; color:#222; }
+    header { background:#0067b8; color:white; padding:60px 20px 40px; text-align:center; }
+    header h1 { font-size:56px; margin-bottom:10px; }
+    header p { font-size:20px; font-weight:500; margin-bottom:30px; }
+    nav { display:flex; justify-content:center; gap:30px; }
+    nav a { background:white; color:#0067b8; padding:12px 20px; border-radius:6px;
+            text-decoration:none; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    nav a:hover { background:#e6f0ff; } 
+body::before {
+  content: "";
+  position: fixed;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 20px);
+  background: url("backroomss1.png") no-repeat center center;
+  background-size: cover;
+  filter: blur(6px);
+  z-index: -1;
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Chi tiết đặt hàng</h1>
+    <p>Trang chi tiết sản phẩm HarryFood</p>
+    <nav>
+      <a href="dathang.html">Quay lại đặt hàng?</a>
+    </nav>
+</header>
+
+<h2 id="productName"></h2>
+<p id="productPrice"></p>
+<p>Tồn kho: <span id="productStock">1</span></p>
+
+<form id="detailForm">
+  <label>Trạng thái sản phẩm:</label>
+  <input type="radio" name="status" value="Bình thường" checked> Bình thường
+  <input type="radio" name="status" value="Lạnh"> Lạnh<br><br>
+
+  <label>Số lượng:</label>
+  <input type="number" name="quantity" min="1" value="1" required><br><br>
+
+  <label>Tên:</label>
+  <input type="text" name="customerName" placeholder="Nhập tên của bạn" required><br><br>
+
+  <label>Lớp:</label>
+  <input type="text" name="className" placeholder="Nhập lớp của bạn" required><br><br>
+
+  <label>Ngày giao hàng:</label>
+  <input type="date" name="deliveryDate" required><br><br>
+
+  <button type="submit">Xác nhận đặt hàng</button>
+</form>
+
+<br>
+<button onclick="goBack()">⬅️ Trở về Đặt Hàng</button>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const product = params.get("product");
+
+  const productPrices = {
+    "C2 Calamansi Tea": 13000,
+    "C2 Lemon Tea": 13000,
+    "C2 Lychee Tea": 13000,
+    "C2 Icy Mint Lemon": 13000,
+    "C2 Strawberry Cherry": 13000,
+    "C2 Melon Mint": 13000,
+    "Fuze Tea Lemon Lemongrass": 10000,
+    "Pepsi Cola": 9000,
+    "Mirinda Soda Cream": 9000,
+    "Coca Cola": 9000,
+    "Sprite": 9000,
+    "7Up": 9000
+  };
+
+  document.getElementById("productName").textContent = product;
+  document.getElementById("productPrice").textContent = "Giá: " + productPrices[product] + " VND";
+  document.getElementById("productStock").textContent = localStorage.getItem(product) || "0";
+
+  document.getElementById("detailForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const status = form.status.value;
+    const quantity = parseInt(form.quantity.value);
+    const customerName = form.customerName.value;
+    const className = form.className.value;
+    const deliveryDate = form.deliveryDate.value;
+
+    // Trừ tồn kho
+    let stock = parseInt(localStorage.getItem(product) || "0");
+    if (quantity > stock) {
+      alert("Không đủ hàng tồn kho!");
+      return;
+    }
+    stock -= quantity;
+    localStorage.setItem(product, stock);
+    document.getElementById("productStock").textContent = stock;
+
+    // Lưu đơn hàng vào localStorage.orders
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const order = {
+      customerName: customerName,
+      className: className,
+      product: product,
+      status: status,
+      quantity: quantity,
+      deliveryDate: deliveryDate,
+      time: new Date().toLocaleString()
+    };
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    // Ngăn spam: disable form
+    Array.from(form.elements).forEach(el => el.disabled = true);
+
+    alert("Đơn hàng cho " + product + " đã được ghi nhận!");
+
+    // Tự động quay về menu sau 1.5 giây
+    setTimeout(() => {
+      window.location.href = "dathang.html";
+    }, 1500);
+  });
+
+  function goBack() {
+    window.location.href = "dathang.html";
+  }
+</script>
+</body>
+</html>

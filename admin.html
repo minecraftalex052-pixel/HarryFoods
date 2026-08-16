@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin HarryFood</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f3f3f3; margin:0; padding:20px; }
+    h1 { color:#0067b8; }
+    #login, #adminPanel { margin-top:20px; }
+    input, button { margin:5px 0; padding:8px; }
+    table { border-collapse: collapse; width: 100%; margin-top:20px; background:white; }
+    th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+    th { background:#0067b8; color:white; }
+    button { padding:6px 10px; margin:2px; border:none; cursor:pointer; }
+    .btn-add { background:#28a745; color:white; }
+    .btn-add:hover { background:#218838; }
+    .btn-reduce { background:#dc3545; color:white; }
+    .btn-reduce:hover { background:#c82333; }
+    .btn-done { background:#007bff; color:white; }
+    .btn-done:hover { background:#0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Admin HarryFood</h1>
+
+  <!-- Đăng nhập -->
+  <div id="login">
+    <p>Nhập mật khẩu để truy cập:</p>
+    <input type="password" id="password">
+    <button onclick="checkPassword()">Đăng nhập</button>
+  </div>
+
+  <!-- Panel quản lý -->
+  <div id="adminPanel" style="display:none;">
+    <h2>Quản lý tồn kho</h2>
+    <table id="stockTable">
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Tồn kho hiện tại</th>
+          <th>Số lượng nhập/giảm</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Dashboard đơn hàng</h2>
+    <table id="orderTable">
+      <thead>
+        <tr>
+          <th>Khách hàng</th>
+          <th>Sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Thời gian</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+<script>
+  const ADMIN_PASS = "123@123a#250114*166466!98251547"; // mật khẩu siêu mạnh
+
+  const products = [
+    "C2 Calamansi Tea",
+    "C2 Lemon Tea",
+    "C2 Lychee Tea",
+    "C2 Icy Mint Lemon",
+    "C2 Strawberry Cherry",
+    "C2 Melon Mint",
+    "Fuze Tea Lemon Lemongrass",
+    "Pepsi Cola",
+    "Mirinda Soda Cream",
+    "Coca Cola",
+    "Sprite",
+    "7Up"
+  ];
+
+  function checkPassword() {
+    const pass = document.getElementById("password").value;
+    if (pass === ADMIN_PASS) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("adminPanel").style.display = "block";
+      loadStockTable();
+      loadOrders();
+    } else {
+      alert("Sai mật khẩu!");
+    }
+  }
+
+  // ===== Quản lý tồn kho =====
+  function loadStockTable() {
+    const tbody = document.querySelector("#stockTable tbody");
+    tbody.innerHTML = "";
+
+    products.forEach(product => {
+      let stock = parseInt(localStorage.getItem(product) || "0");
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${product}</td>
+        <td id="stock-${product.replace(/\s+/g,'-')}">${stock}</td>
+        <td><input type="number" id="input-${product.replace(/\s+/g,'-')}" value="0"></td>
+        <td>
+          <button class="btn-add" onclick="addStock('${product}')">Nhập thêm</button>
+          <button class="btn-reduce" onclick="reduceStock('${product}')">Giảm</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function addStock(product) {
+    const inputId = "input-" + product.replace(/\s+/g,'-');
+    const qty = parseInt(document.getElementById(inputId).value);
+
+    if (isNaN(qty) || qty <= 0) {
+      alert("Vui lòng nhập số lượng hợp lệ!");
+      return;
+    }
+
+    let stock = parseInt(localStorage.getItem(product) || "0");
+    stock += qty;
+    localStorage.setItem(product, stock);
+
+    document.getElementById("stock-" + product.replace(/\s+/g,'-')).textContent = stock;
+    alert("Đã nhập thêm " + qty + " cho " + product + ". Tồn kho mới: " + stock);
+  }
+
+  function reduceStock(product) {
+    const inputId = "input-" + product.replace(/\s+/g,'-');
+    const qty = parseInt(document.getElementById(inputId).value);
+
+    if (isNaN(qty) || qty <= 0) {
+      alert("Vui lòng nhập số lượng hợp lệ!");
+      return;
+    }
+
+    let stock = parseInt(localStorage.getItem(product) || "0");
+
+    if (qty > stock) {
+      alert("Không thể giảm quá số lượng tồn kho hiện tại!");
+      return;
+    }
+
+    stock -= qty;
+    localStorage.setItem(product, stock);
+
+    document.getElementById("stock-" + product.replace(/\s+/g,'-')).textContent = stock;
+    alert("Đã giảm " + qty + " cho " + product + ". Tồn kho mới: " + stock);
+  }
+
+  // ===== Dashboard đơn hàng =====
+  function loadOrders() {
+    const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const tbody = document.querySelector("#orderTable tbody");
+    tbody.innerHTML = "";
+
+    orders.forEach((order, index) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${order.customerName}</td>
+        <td>${order.product}</td>
+        <td>${order.quantity}</td>
+        <td>${order.time}</td>
+        <td>
+          <button class="btn-done" onclick="markDone(${index})">Đã xử lý</button>
+          <button class="btn-reduce" onclick="cancelOrder(${index})">Huỷ</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function markDone(index) {
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    orders.splice(index, 1);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    alert("Đơn hàng đã xử lý!");
+    loadOrders();
+  }
+
+  function cancelOrder(index) {
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const order = orders[index];
+    let stock = parseInt(localStorage.getItem(order.product) || "0");
+    stock += order.quantity;
+    localStorage.setItem(order.product, stock);
+    orders.splice(index, 1);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    alert("Đơn hàng đã huỷ!");
+    loadOrders();
+    loadStockTable();
+  }
+</script>
+</body>
+</html>

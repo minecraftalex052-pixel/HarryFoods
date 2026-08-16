@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt Hàng Trước</title>
+  <style>
+    .product-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+    .product-card { border: 1px solid #ccc; padding: 15px; width: 200px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .product-card:hover { box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+    .product-card img { width: 100%; height: auto; }
+    .product-card button { margin-top: 10px; padding: 8px 12px; background: #28a745; color: white; border: none; cursor: pointer; }
+    .product-card button:hover { background: #218838; }
+
+    body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:#f3f3f3; color:#222; }
+    header { background:#0067b8; color:white; padding:60px 20px 40px; text-align:center; }
+    header h1 { font-size:56px; margin-bottom:10px; }
+    header p { font-size:20px; font-weight:500; margin-bottom:30px; }
+    nav { display:flex; justify-content:center; gap:30px; }
+    nav a { background:white; color:#0067b8; padding:12px 20px; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    nav a:hover { background:#e6f0ff; } 
+    footer { text-align:center; padding:30px; font-size:14px; color:#555; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Đặt Hàng Trước</h1>
+  <p>Đặt hàng trước theo ý bạn muốn🥰</p>
+</header>
+
+<h2>Menu sản phẩm HarryFood</h2>
+<div class="product-grid">
+  <!-- Danh sách sản phẩm -->
+  <div class="product-card" onclick="checkStock('C2 Calamansi Tea', 2)">
+    <img src="images/c2-calamansi.jpg" alt="C2 Calamansi Tea">
+    <h3>C2 Calamansi Tea</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-calamansi">2</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('C2 Lemon Tea', 0)">
+    <img src="images/c2-lemon.jpg" alt="C2 Lemon Tea">
+    <h3>C2 Lemon Tea</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-lemon">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('C2 Lychee Tea', 0)">
+    <img src="images/c2-lychee.jpg" alt="C2 Lychee Tea">
+    <h3>C2 Lychee Tea</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-lychee">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('C2 Icy Mint Lemon', 0)">
+    <img src="images/c2-icy-mint.jpg" alt="C2 Icy Mint Lemon">
+    <h3>C2 Icy Mint Lemon</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-icy-mint">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('C2 Strawberry Cherry', 0)">
+    <img src="images/c2-strawberry.jpg" alt="C2 Strawberry Cherry">
+    <h3>C2 Strawberry Cherry</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-strawberry">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('C2 Melon Mint', 0)">
+    <img src="images/c2-melon.jpg" alt="C2 Melon Mint">
+    <h3>C2 Melon Mint</h3>
+    <p>Giá: 13,000 VND</p>
+    <p>Tồn kho: <span id="stock-melon">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('Fuze Tea Lemon Lemongrass', 0)">
+    <img src="images/fuze-tea.jpg" alt="Fuze Tea Lemon Lemongrass">
+    <h3>Fuze Tea Lemon Lemongrass</h3>
+    <p>Giá: 10,000 VND</p>
+    <p>Tồn kho: <span id="stock-fuze">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('Pepsi Cola', 0)">
+    <img src="images/pepsi.jpg" alt="Pepsi Cola">
+    <h3>Pepsi Cola</h3>
+    <p>Giá: 9,000 VND</p>
+    <p>Tồn kho: <span id="stock-pepsi">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+
+  <div class="product-card" onclick="checkStock('Mirinda Soda Cream', 0)">
+    <img src="images/mirinda.jpg" alt="Mirinda Soda Cream">
+    <h3>Mirinda Soda Cream</h3>
+    <p>Giá: 9,000 VND</p>
+    <p>Tồn kho: <span id="stock-mirinda">0</span></p>
+    <button>Đặt ngay</button>
+  </div>
+</div>
+
+<script>
+  function checkStock(productName, defaultStock) {
+    let stock = parseInt(localStorage.getItem(productName) || defaultStock);
+    if (stock <= 0) {
+      alert("Xin lỗi nhưng chúng tôi hết hàng rồi, quay lại sau nhé");
+    } else {
+      window.location.href = "detail.html?product=" + encodeURIComponent(productName);
+    }
+  }
+
+  window.onload = function() {
+    const products = {
+      "C2 Calamansi Tea":"stock-calamansi",
+      "C2 Lemon Tea":"stock-lemon",
+      "C2 Lychee Tea":"stock-lychee",
+      "C2 Icy Mint Lemon":"stock-icy-mint",
+      "C2 Strawberry Cherry":"stock-strawberry",
+      "C2 Melon Mint":"stock-melon",
+      "Fuze Tea Lemon Lemongrass":"stock-fuze",
+      "Pepsi Cola":"stock-pepsi",
+      "Mirinda Soda Cream":"stock-mirinda"
+    };
+
+    for (const [name,id] of Object.entries(products)) {
+      const stock = localStorage.getItem(name);
+      if (stock !== null) {
+        const span = document.getElementById(id);
+        if (span) span.textContent = stock;
+      }
+    }
+  };
+</script>
+</body>
+</html>
